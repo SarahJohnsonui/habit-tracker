@@ -1,17 +1,79 @@
 import { useState } from 'react'
+import { Habit, HabitCategory, FrequencyType } from './types/habit'
+import HabitList from './components/HabitList'
+import CreateHabitForm from './components/CreateHabitForm'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [habits, setHabits] = useState<Habit[]>([])
+  const [showCreateForm, setShowCreateForm] = useState(false)
+
+  const createHabit = (habitData: {
+    name: string
+    description: string
+    category: HabitCategory
+    targetFrequency: FrequencyType
+  }) => {
+    const newHabit: Habit = {
+      id: Date.now().toString(),
+      ...habitData,
+      createdAt: new Date(),
+      completions: []
+    }
+    
+    setHabits(prev => [...prev, newHabit])
+    setShowCreateForm(false)
+  }
+
+  const toggleHabitCompletion = (habitId: string, date: string) => {
+    setHabits(prev => prev.map(habit => {
+      if (habit.id === habitId) {
+        const existingCompletion = habit.completions.find(c => c.date === date)
+        
+        if (existingCompletion) {
+          return {
+            ...habit,
+            completions: habit.completions.map(c =>
+              c.date === date ? { ...c, completed: !c.completed } : c
+            )
+          }
+        } else {
+          return {
+            ...habit,
+            completions: [...habit.completions, { date, completed: true }]
+          }
+        }
+      }
+      return habit
+    }))
+  }
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Daily Habit Tracker</h1>
-      <p>Welcome to your personal habit tracking app!</p>
-      <div>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="container">
+      <header className="header">
+        <h1>Daily Habit Tracker</h1>
+        <p>Build better habits, one day at a time</p>
+      </header>
+      
+      <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+        <button 
+          className="btn"
+          onClick={() => setShowCreateForm(true)}
+        >
+          + Add New Habit
         </button>
       </div>
+
+      <HabitList 
+        habits={habits}
+        onToggleComplete={toggleHabitCompletion}
+      />
+
+      {showCreateForm && (
+        <CreateHabitForm
+          onCreateHabit={createHabit}
+          onCancel={() => setShowCreateForm(false)}
+        />
+      )}
     </div>
   )
 }

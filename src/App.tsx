@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Habit, HabitCategory, FrequencyType } from './types/habit'
 import HabitList from './components/HabitList'
 import CreateHabitForm from './components/CreateHabitForm'
+import { useLocalStorage } from './hooks/useLocalStorage'
 
 function App() {
-  const [habits, setHabits] = useState<Habit[]>([])
+  const [habits, setHabits] = useLocalStorage<Habit[]>('habits', [])
   const [showCreateForm, setShowCreateForm] = useState(false)
 
   const createHabit = (habitData: {

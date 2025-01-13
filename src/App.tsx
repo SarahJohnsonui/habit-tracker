@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Habit, HabitCategory, FrequencyType } from './types/habit'
 import HabitList from './components/HabitList'
 import CreateHabitForm from './components/CreateHabitForm'
+import HabitStats from './components/HabitStats'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
 function App() {
@@ -54,6 +55,8 @@ function App() {
         <h1>Daily Habit Tracker</h1>
         <p>Build better habits, one day at a time</p>
       </header>
+      
+      {habits.length > 0 && <HabitStats habits={habits} />}
       
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <button 
